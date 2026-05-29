@@ -1,13 +1,26 @@
 {
   "name": "dadbot",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "DadBot's just trying his best, man",
+  "type": "module",
+  "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsx src/index.ts",
+    "dev": "tsx --watch src/index.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Contessa",
   "license": "ISC",
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@10.33.0",
+  "devDependencies": {
+    "@tsconfig/node24": "^24.0.4",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@sapphire/discord.js-utilities": "^7.3.3",
+    "@sapphire/framework": "^5.5.0",
+    "discord.js": "~14.26.4",
+    "dotenv": "^17.4.2"
+  }
 }
