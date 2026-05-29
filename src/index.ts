@@ -1,6 +1,7 @@
 import "dotenv/config"
 import { SapphireClient } from "@sapphire/framework";
 import { GatewayIntentBits } from "discord.js";
+import { botToken } from "./constants.ts";
 
 const client = new SapphireClient({
     caseInsensitiveCommands: true,
@@ -21,4 +22,4 @@ const client = new SapphireClient({
         GatewayIntentBits.MessageContent],
 });
 
-client.login(process.env["DISCORD_BOT_TOKEN"]);
+client.login(botToken);
