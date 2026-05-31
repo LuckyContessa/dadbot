@@ -1,0 +1,5 @@
+# EditorConfig is awesome: https://editorconfig.org
+
+[*.ts]
+indent_style = space
+indent_size = 2
