@@ -6,7 +6,9 @@ import { guildIds } from "../constants.ts";
 interface GameState {
   player: string,
   score: number,
+  previous?: number,
   target: number,
+  guess?: 'higher' | 'lower',
   phase: 'running' | 'timeout' | 'over'
 }
 const randomNumber = (): number => {
@@ -46,26 +48,30 @@ export class HighLowCommand extends Command {
     let shouldContinue = true;
     while (shouldContinue) {
       try {
+        // TODO: This should really be persisted in the db and handled via a separate interaction hook
         const choice = await gameMsg.resource?.message?.awaitMessageComponent({time: 60_000})!;
         if (choice.user.id != gameState.player) {
           await choice.reply({content: "Hey, this isn't your game!", flags: [MessageFlags.Ephemeral]});
           continue;
         } 
 
-        let next: number;
-        do {
-          next = randomNumber();
-        } while (next == gameState.target)
-
-        let correct = next > gameState.target && choice?.customId == 'higher'
-          || next < gameState.target && choice?.customId == 'lower';
-        gameState.target = next;
+        gameState.guess = choice.customId == 'higher' ? 'higher' : 'lower';
+        gameState.previous = gameState.target;
+        gameState.target = randomNumber();
         
-        if (correct) {
+        const correct = gameState.target > gameState.previous && gameState.guess == 'higher'
+            || gameState.target < gameState.previous && gameState.guess == 'lower';
+        const lucky = gameState.target == gameState.previous;
+        
+        if (lucky) {
+          // YOU GET NOTHING, YOU LOSE, GOOD DAY SIR
+          gameState.score += 0;
+        } else if (correct) {
           gameState.score += 1;
         } else {
           gameState.phase = 'over';
           shouldContinue = false;
+          // TODO: Need to add a high score board
         }
 
         gameMsg = await choice?.update({...renderGame(gameState), withResponse: true});
@@ -102,11 +108,16 @@ function renderGame(gameState: GameState): BaseMessageOptions {
 
   let description = `${numToEmoji(gameState.target)}\n\n`;
   if (gameState.phase == 'running') {
+    if (gameState.target == gameState.previous) {
+      description += "Lucky!! Neither higher nor lower...\n"
+    } else if (!!gameState.previous) {
+      description += "Correct!!\n"
+    }
     description += "Will the next number be higher or lower? (1-22)"
   } else if (gameState.phase == 'timeout') {
     description += "Sorry, you ran out of time ☹️"
   } else {
-    description += "Game over!"
+    description += "Oh no!!\nSuch a shame but I'm afraid that's game over"
   }
   
   return {
