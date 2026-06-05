@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import type { Message } from "discord.js";
 
-const db = Database("data.db")
+const db = Database("../data.db")
 // TODO: Sweep older messages
 
 // CREATE TABLE messages(id INTEGER PRIMARY KEY ASC, discord_id TEXT, channel_id TEXT, server_id TEXT, author TEXT, content TEXT, timestamp NUMERIC);
