@@ -1,5 +1,6 @@
 {
   "name": "dadbot",
+  "private": true,
   "version": "1.0.0",
   "description": "DadBot's just trying his best, man",
   "type": "module",
