@@ -1,9 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import App from './app.tsx'
+import { Layout } from './components/Layout'
+import '@mantine/core/styles.css'
+import './global.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <Layout>
+      <div style={{ padding: '1rem' }}>
+        {/* Main content — pages go here */}
+      </div>
+    </Layout>
   </StrictMode>,
 )

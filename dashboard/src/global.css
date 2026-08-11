@@ -1,0 +1,14 @@
+/* Global styles */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Sidebar nav item hover effect */
+.nav-item:hover {
+  background-color: var(--mantine-color-gruvboxbg1);
+}
+
+.nav-item.active {
+  background-color: var(--mantine-color-gruvboxbg2);
+}
