@@ -1,7 +1,7 @@
 import { Command } from "@sapphire/framework";
 import { isMessageInstance, isTextBasedChannel } from "@sapphire/discord.js-utilities";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, MessagePayload, userMention, type BaseMessageOptions, type InteractionReplyOptions, type Message } from "discord.js";
-import { guildIds } from "../constants.ts";
+import { getConfig } from "../config.ts";
 
 interface GameState {
   player: string,
@@ -32,6 +32,8 @@ export class HighLowCommand extends Command {
   }
   
   public override registerApplicationCommands(registry: Command.Registry) {
+    const guildIds = getConfig().servers.map(s => s.guildId);
+
     registry.registerChatInputCommand((builder) => {
       builder.setName(this.name)
       .setDescription(this.description)

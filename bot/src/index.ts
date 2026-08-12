@@ -1,9 +1,24 @@
 import "dotenv/config"
 import { SapphireClient } from "@sapphire/framework";
-import { GatewayIntentBits } from "discord.js";
-import { botToken } from "./constants.ts";
+import '@sapphire/plugin-api/register'; // Adds `api` field to SapphireClientOptions
+import { GatewayIntentBits, OAuth2Scopes } from "discord.js";
+import { getConfig } from "./config.ts";
+
+const config = getConfig();
 
 const client = new SapphireClient({
+    api: {
+        auth: {
+            id: config.clientId,
+            secret: config.clientSecret,
+            cookie: 'DADBOT_AUTH',
+            scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
+            domainOverwrite: '127.0.0.1'
+        },
+        listenOptions: {
+            port: 3000
+        }
+    },
     caseInsensitiveCommands: true,
     caseInsensitivePrefixes: true,
     defaultPrefix: "^",
@@ -22,4 +37,4 @@ const client = new SapphireClient({
         GatewayIntentBits.MessageContent],
 });
 
-client.login(botToken);
+client.login(config.botToken);

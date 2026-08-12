@@ -1,7 +1,7 @@
 import { Command } from "@sapphire/framework";
 import { isMessageInstance, isTextBasedChannel } from "@sapphire/discord.js-utilities";
 import { MessageFlags, type Message } from "discord.js";
-import { guildIds } from "../constants.ts";
+import { getConfig } from "../config.ts";
 
 export class PingCommand extends Command {
   public constructor(context: Command.LoaderContext, options: Command.Options) {
@@ -14,6 +14,8 @@ export class PingCommand extends Command {
   }
 
   public override registerApplicationCommands(registry: Command.Registry) {
+    const guildIds = getConfig().servers.map(s => s.guildId);
+
     registry.registerChatInputCommand((builder) => {
       builder.setName(this.name)
         .setDescription(this.description)
