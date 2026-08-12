@@ -31,61 +31,65 @@ const navItems: NavItem[] = [
   { label: 'GIFs', icon: <Gift width={18} height={18} /> },
 ];
 
+export function NavItem(item: NavItem) {
+  return (
+    <Group
+      key={item.label}
+      gap="sm"
+      px="sm"
+      py="xs"
+      wrap="nowrap"
+      style={{
+        cursor: 'pointer',
+        borderRadius: 'var(--mantine-radius-sm)',
+        background: item.active
+          ? 'var(--mantine-color-gruvboxbg2)'
+          : 'transparent',
+        transition: 'background 150ms ease',
+      }}
+      onMouseEnter={(e) => {
+        if (!item.active) {
+          e.currentTarget.style.background =
+            'var(--mantine-color-gruvboxbg1)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!item.active) {
+          e.currentTarget.style.background = 'transparent';
+        }
+      }}
+    >
+      <div
+        style={{
+          width: 24,
+          height: 24,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+          color: item.active ? 'var(--mantine-color-gruvboxyellow)' : 'var(--mantine-color-gruvboxfg)',
+        }}
+      >
+        {item.icon}
+      </div>
+      <Text
+        size="sm"
+        c={item.active ? 'gruvboxyellow' : 'gruvboxfg'}
+        fw={item.active ? 600 : 400}
+        style={{ flex: 1, whiteSpace: 'nowrap' }}
+      >
+        {item.label}
+      </Text>
+    </Group>
+  )
+}
+
 export function Sidebar() {
   return (
     <Flex direction="column" h="100%">
       <ScrollArea style={{ flex: 1 }}>
         <Flex direction="column" gap="xs">
-          {navItems.map((item) => (
-            <Group
-              key={item.label}
-              gap="sm"
-              px="sm"
-              py="xs"
-              wrap="nowrap"
-              style={{
-                cursor: 'pointer',
-                borderRadius: 'var(--mantine-radius-sm)',
-                background: item.active
-                  ? 'var(--mantine-color-gruvboxbg2)'
-                  : 'transparent',
-                transition: 'background 150ms ease',
-              }}
-              onMouseEnter={(e) => {
-                if (!item.active) {
-                  e.currentTarget.style.background =
-                    'var(--mantine-color-gruvboxbg1)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!item.active) {
-                  e.currentTarget.style.background = 'transparent';
-                }
-              }}
-            >
-              <div
-                style={{
-                  width: 24,
-                  height: 24,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  color: item.active ? 'var(--mantine-color-gruvboxyellow)' : 'var(--mantine-color-gruvboxfg)',
-                }}
-              >
-                {item.icon}
-              </div>
-              <Text
-                size="sm"
-                c={item.active ? 'gruvboxyellow' : 'gruvboxfg'}
-                fw={item.active ? 600 : 400}
-                style={{ flex: 1, whiteSpace: 'nowrap' }}
-              >
-                {item.label}
-              </Text>
-            </Group>
-          ))}
+          {navItems.map(NavItem)}
         </Flex>
       </ScrollArea>
 

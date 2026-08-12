@@ -3,14 +3,13 @@ module.exports = {
     'postcss-preset-mantine': {},
     'postcss-simple-vars': {
       variables: {
+        // Mantine breakpoints
         'mantine-breakpoint-xs': '36em',
         'mantine-breakpoint-sm': '48em',
         'mantine-breakpoint-md': '62em',
         'mantine-breakpoint-lg': '75em',
         'mantine-breakpoint-xl': '88em',
-      },
-      // Gruvbox Dark palette
-      variables: {
+        // Gruvbox Dark palette
         'gruvbox-bg': '#282822',
         'gruvbox-bg0': '#1d2021',
         'gruvbox-bg1': '#32302f',
