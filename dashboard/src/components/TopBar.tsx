@@ -89,11 +89,10 @@ export function TopBar() {
         {/* DadBot Logo */}
         <Text
           fw={700}
-          c="gruvboxyellow"
           size="lg"
           style={{ fontFamily: 'monospace' }}
         >
-          DadBot Dashboard
+          Dadbot
         </Text>
       </Group>
 
