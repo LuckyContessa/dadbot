@@ -5,6 +5,10 @@ import { GatewayIntentBits, OAuth2Scopes } from "discord.js";
 import { getConfig } from "./config.ts";
 
 const config = getConfig();
+const dev = !!process.env['DEV']
+if (dev) {
+    console.log("DEVELOPMENT MODE DETECTED")
+}
 
 const client = new SapphireClient({
     api: {
@@ -13,11 +17,13 @@ const client = new SapphireClient({
             secret: config.clientSecret,
             cookie: 'DADBOT_AUTH',
             scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
-            domainOverwrite: '127.0.0.1'
+            redirect: process.env['DEV'] ? "http://127.0.0.1:5173" : undefined,
+            domainOverwrite: process.env['DEV'] ? '127.0.0.1' : undefined
         },
+        prefix: '/api',
         listenOptions: {
-            port: 3000
-        }
+            port: 8013,
+        },
     },
     caseInsensitiveCommands: true,
     caseInsensitivePrefixes: true,

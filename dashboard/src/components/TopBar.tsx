@@ -7,7 +7,9 @@ import {
   Text,
   UnstyledButton,
 } from '@mantine/core';
-import { ChevronDown, Globe, LogOut, Settings, User } from 'lucide-react';
+import { ChevronDown, Globe, LogIn, LogOut, Settings, User } from 'lucide-react';
+import React, { useCallback } from 'react';
+import { useAuthState } from '../state/auth';
 
 // Mock server list — replace with real data later
 const servers = [
@@ -32,7 +34,37 @@ export function ServerSelector() {
 }
 
 export function UserMenu() {
-  return (
+  const authState = useAuthState()
+  const user = authState.user;
+
+  const login = useCallback(() => {
+    const oauthURL = new URL("https://discord.com/oauth2/authorize");
+    oauthURL.search = new URLSearchParams([
+      ['redirect_uri', 'http://127.0.0.1:5173'], // TODO: Detect dev mode
+      ['response_type', 'code'],
+      ['scope', ['identify', 'guilds'].join(' ')],
+      ['client_id', '1509416040025817158'] // TODO: Load from config.yml
+    ]).toString();
+
+    window.location.replace(oauthURL);
+  }, []);
+
+  // TODO: This doesn't work
+  if (authState.loggingIn) {
+    <Group>
+      <LogIn size={14} />
+      <Text>Logging in...</Text>
+    </Group>
+  }
+
+  if (!user) {
+    return <Group onClick={login}>
+      <LogIn size={14} />
+      <Text>Log in</Text>
+    </Group>
+  }
+
+  return  (
     <Menu position="bottom-end" width={200}>
       <Menu.Target>
         <UnstyledButton
@@ -49,10 +81,11 @@ export function UserMenu() {
             size="sm"
             radius="xl"
             color="gruvboxorange"
-            name="Whit"
+            src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`}
+            name={user.username}
           />
           <Text size="sm" c="gruvboxfg">
-            Whit
+            {user.username}
           </Text>
           <ChevronDown size={14} />
         </UnstyledButton>
@@ -73,7 +106,7 @@ export function UserMenu() {
   )
 }
 
-export function TopBar() {
+export function TopBar({burger}: {burger: React.ReactElement}) {
   return (
     <Flex
       h="100%"
@@ -87,11 +120,11 @@ export function TopBar() {
     >
       <Group gap="sm">
         {/* DadBot Logo */}
+        {burger}
         <Text
-          fw={700}
-          size="lg"
-          style={{ fontFamily: 'monospace' }}
-        >
+            fw={700}
+            size="lg"
+            style={{ fontFamily: 'monospace' }}>
           Dadbot
         </Text>
       </Group>

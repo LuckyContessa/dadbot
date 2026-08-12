@@ -5,11 +5,8 @@ import {
   ScrollArea,
   Text,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import {
   BarChart3,
-  ChevronLeft,
-  ChevronRight,
   Gamepad2,
   Sparkles,
   MessageSquare,
@@ -35,7 +32,6 @@ const navItems: NavItem[] = [
 ];
 
 export function Sidebar() {
-  const [collapsed, { toggle }] = useDisclosure(false);
   const [activeItem, setActiveItem] = useState<string>('Overview');
 
   return (
@@ -88,39 +84,19 @@ export function Sidebar() {
               >
                 {item.icon}
               </div>
-              {!collapsed && (
-                <Text
-                  size="sm"
-                  c={isActive ? 'gruvboxyellow' : 'gruvboxfg'}
-                  fw={isActive ? 600 : 400}
-                  style={{ flex: 1, whiteSpace: 'nowrap', marginLeft: 'var(--mantine-spacing-sm)' }}
-                >
-                  {item.label}
-                </Text>
-              )}
+              <Text
+                size="sm"
+                c={isActive ? 'gruvboxyellow' : 'gruvboxfg'}
+                fw={isActive ? 600 : 400}
+                style={{ flex: 1, whiteSpace: 'nowrap', marginLeft: 'var(--mantine-spacing-sm)' }}
+              >
+                {item.label}
+              </Text>
             </Group>
           );
           })}
         </Flex>
       </ScrollArea>
-
-      {/* Collapse toggle */}
-      <Flex justify="center" py="sm">
-        <div
-          style={{
-            width: 24,
-            height: 24,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--mantine-color-gruvboxfg)',
-            cursor: 'pointer',
-          }}
-          onClick={toggle}
-        >
-          {collapsed ? <ChevronRight width={18} height={18} /> : <ChevronLeft width={18} height={18} />}
-        </div>
-      </Flex>
     </Flex>
   );
 }
