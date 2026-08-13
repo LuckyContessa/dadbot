@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Button,
   Flex,
   Group,
   Loader,
@@ -10,33 +11,41 @@ import {
 } from '@mantine/core';
 import { ChevronDown, Globe, LogIn, LogOut } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useAuthState } from '../state/auth';
+import { useAuth } from '../state/auth';
 import { useSearchParams } from 'react-router';
+import { useConfig } from '../state/config';
 
-// Mock server list — replace with real data later
-const servers = [
-  { id: '1', name: 'Contessa Uneven', icon: '👑' },
-  { id: '2', name: 'CODE-A...', icon: '💀' },
-  { id: '3', name: 'Test Server', icon: '🧪' },
-];
 
 export function ServerSelector() {
+  const auth = useAuth()
+  const config = useConfig();
+  const activeGuild = auth?.guilds.find(g => g.id == config.activeServerId);
+  const icon = activeGuild?.icon
+    ? <Avatar size={25} radius="sm" src={`https://cdn.discordapp.com/icons/${activeGuild.id}/${activeGuild.icon}`} />
+    : <Globe size={14} />
+
+  const managedGuilds = config.configs
+      .map(c => auth.guilds.find(g => g.id == c.guildId))
+      .filter(g => g != undefined);
+
   return (
       <Select
-        data={servers.map((s) => ({
-          value: s.id,
-          label: `${s.icon} ${s.name}`,
+        data={managedGuilds.map((g) => ({
+          value: g.id,
+          label: `${g.name}`,
         }))}
+        value={config.activeServerId}
+        onChange={(id) => {if (id) config.setActiveServerId(id)}}
         placeholder="Select server"
         size="sm"
-        leftSection={<Globe size={14} />}
+        leftSection={icon}
         allowDeselect={false}
       />
   )
 }
 
 export function UserMenu() {
-  const authState = useAuthState();
+  const authState = useAuth();
   const user = authState.user;
   if (!user) return <>Nope.</>
   const username = user.global_name || user.username;
@@ -77,7 +86,8 @@ export function UserMenu() {
 }
 
 export function TopBar({burger}: {burger: React.ReactElement}) {
-  const authState = useAuthState();
+  const authState = useAuth();
+  const servers = useConfig();
   const user = authState.user;
   const [loggingIn, setLoggingIn] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -87,9 +97,11 @@ export function TopBar({burger}: {burger: React.ReactElement}) {
     if (code) { 
       setSearchParams("")
       authState.login(code)
+        .then(() => servers.load())
         .then(() => setLoggingIn(false));
     } else {
       authState.load()
+        .then(() => servers.load())
         .then(() => setLoggingIn(false));
     }
   }, [])
@@ -128,15 +140,13 @@ export function TopBar({burger}: {burger: React.ReactElement}) {
         </Text>
       </Group>
 
-      <Group gap="sm">
+      {user && <Group gap="sm">
         <ServerSelector />
-        {user && <UserMenu />}
-        {!user && loggingIn && <Loader size={20} />}
-        {!user && !loggingIn && <Group onClick={login}>
-            <LogIn size={14} />
-            <Text>Log in</Text>
-          </Group>}
-      </Group>
+        <UserMenu />
+      </Group>}
+      {!user && <Button leftSection={<LogIn size={14} />} loading={loggingIn} variant="outline" onClick={login}>
+        Log in
+      </Button>}
     </Flex>
   );
 }

@@ -2,7 +2,7 @@ import { create, type StoreApi, type UseBoundStore } from 'zustand';
 import type { RESTAPIPartialCurrentUserGuild, RESTGetAPICurrentUserResult } from 'discord.js';
 
 
-export interface AuthState {
+export interface Auth {
     user?: RESTGetAPICurrentUserResult,
     guilds: RESTAPIPartialCurrentUserGuild[],
     error?: string | null,
@@ -11,7 +11,7 @@ export interface AuthState {
     logout: () => void,
 }
 
-export const useAuthState: UseBoundStore<StoreApi<AuthState>> = create((set) => ({
+export const useAuth: UseBoundStore<StoreApi<Auth>> = create((set) => ({
     user: undefined,
     guilds: [],
     error: null,
@@ -36,8 +36,6 @@ export const useAuthState: UseBoundStore<StoreApi<AuthState>> = create((set) => 
 
         const loginData = await response.json();
         if (loginData.user && loginData.guilds) {
-            console.log("Logged in. Data:");
-            console.log(loginData);
             set({ user: loginData.user, guilds: loginData.guilds, error: null });
         } else {
             set({ user: undefined, guilds: [], error: JSON.stringify(loginData) });
