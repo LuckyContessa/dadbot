@@ -6,23 +6,10 @@ import {
 import { theme } from '../theme';
 import { TopBar } from './TopBar';
 import { Sidebar } from './Sidebar';
-import { useAuthState } from '../state/auth';
 import { useDisclosure } from '@mantine/hooks';
-import { useSearchParams } from 'react-router';
-import { useEffect } from 'react';
 
 export function App() {
-  const authState = useAuthState();
   const [opened, {toggle}] = useDisclosure()
-  const [searchParams, setSearchParams] = useSearchParams();
-  const code = searchParams.get("code");
-
-  useEffect(() => {
-    if (code) {
-      setSearchParams("")
-      authState.login(code);
-    }
-  }, [])
 
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
@@ -35,7 +22,7 @@ export function App() {
               opened={opened}
               onClick={toggle}
               hiddenFrom='sm'
-              size='sm' />}/>
+              size='sm' />} />
         </AppShell.Header>
         <AppShell.Navbar p="md">
           <Sidebar />
@@ -46,7 +33,7 @@ export function App() {
             minHeight: 'calc(100vh - 56px)',
           }}
         >
-          AuthState: {JSON.stringify(authState)}
+          Hi there
         </AppShell.Main>
       </AppShell>
     </MantineProvider>

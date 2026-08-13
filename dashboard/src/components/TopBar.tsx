@@ -2,14 +2,16 @@ import {
   Avatar,
   Flex,
   Group,
+  Loader,
   Menu,
   Select,
   Text,
   UnstyledButton,
 } from '@mantine/core';
-import { ChevronDown, Globe, LogIn, LogOut, Settings, User } from 'lucide-react';
-import React, { useCallback } from 'react';
+import { ChevronDown, Globe, LogIn, LogOut } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAuthState } from '../state/auth';
+import { useSearchParams } from 'react-router';
 
 // Mock server list — replace with real data later
 const servers = [
@@ -34,37 +36,12 @@ export function ServerSelector() {
 }
 
 export function UserMenu() {
-  const authState = useAuthState()
+  const authState = useAuthState();
   const user = authState.user;
+  if (!user) return <>Nope.</>
+  const username = user.global_name || user.username;
 
-  const login = useCallback(() => {
-    const oauthURL = new URL("https://discord.com/oauth2/authorize");
-    oauthURL.search = new URLSearchParams([
-      ['redirect_uri', 'http://127.0.0.1:5173'], // TODO: Detect dev mode
-      ['response_type', 'code'],
-      ['scope', ['identify', 'guilds'].join(' ')],
-      ['client_id', '1509416040025817158'] // TODO: Load from config.yml
-    ]).toString();
-
-    window.location.replace(oauthURL);
-  }, []);
-
-  // TODO: This doesn't work
-  if (authState.loggingIn) {
-    <Group>
-      <LogIn size={14} />
-      <Text>Logging in...</Text>
-    </Group>
-  }
-
-  if (!user) {
-    return <Group onClick={login}>
-      <LogIn size={14} />
-      <Text>Log in</Text>
-    </Group>
-  }
-
-  return  (
+  return (
     <Menu position="bottom-end" width={200}>
       <Menu.Target>
         <UnstyledButton
@@ -82,23 +59,16 @@ export function UserMenu() {
             radius="xl"
             color="gruvboxorange"
             src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`}
-            name={user.username}
+            name={username}
           />
           <Text size="sm" c="gruvboxfg">
-            {user.username}
+            {username}
           </Text>
           <ChevronDown size={14} />
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
-        <Menu.Item leftSection={<User size={14} />}>
-          Profile
-        </Menu.Item>
-        <Menu.Item leftSection={<Settings size={14} />}>
-          Settings
-        </Menu.Item>
-        <Menu.Divider />
-        <Menu.Item leftSection={<LogOut size={14} />}>
+        <Menu.Item leftSection={<LogOut size={14} />} onClick={() => authState.logout()}>
           Log out
         </Menu.Item>
       </Menu.Dropdown>
@@ -107,6 +77,35 @@ export function UserMenu() {
 }
 
 export function TopBar({burger}: {burger: React.ReactElement}) {
+  const authState = useAuthState();
+  const user = authState.user;
+  const [loggingIn, setLoggingIn] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const code = searchParams.get("code");
+
+  useEffect(() => {
+    if (code) { 
+      setSearchParams("")
+      authState.login(code)
+        .then(() => setLoggingIn(false));
+    } else {
+      authState.load()
+        .then(() => setLoggingIn(false));
+    }
+  }, [])
+
+  const login = useCallback(() => {
+    const oauthURL = new URL("https://discord.com/oauth2/authorize");
+    oauthURL.search = new URLSearchParams([
+      ['redirect_uri', 'http://127.0.0.1:5173'], // TODO: Detect dev mode
+      ['response_type', 'code'],
+      ['scope', ['identify', 'guilds'].join(' ')],
+      ['client_id', '1509416040025817158'] // TODO: Load from config.yml
+    ]).toString();
+
+    window.location.replace(oauthURL);
+  }, []);
+
   return (
     <Flex
       h="100%"
@@ -131,7 +130,12 @@ export function TopBar({burger}: {burger: React.ReactElement}) {
 
       <Group gap="sm">
         <ServerSelector />
-        <UserMenu />
+        {user && <UserMenu />}
+        {!user && loggingIn && <Loader size={20} />}
+        {!user && !loggingIn && <Group onClick={login}>
+            <LogIn size={14} />
+            <Text>Log in</Text>
+          </Group>}
       </Group>
     </Flex>
   );
