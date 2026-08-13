@@ -2,7 +2,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { Listener } from "@sapphire/framework";
 import { EmbedBuilder, GatewayDispatchEvents, type GatewayMessageUpdateDispatch } from "discord.js";
 import { getMessage, updateMessage } from "../database.ts";
-import { getEditLogChannel } from "../config.ts";
+import { getServerConfig } from "../config.ts";
 
 
 @ApplyOptions<Listener.Options>(({ container }) => ({
@@ -22,7 +22,7 @@ export class MessageUpdateEditLogListener extends Listener {
             return
         }
 
-        const editLogChannelId = getEditLogChannel(data.guild_id)
+        const editLogChannelId = getServerConfig(data.guild_id)?.editLog?.editLogChannelId;
         if (!editLogChannelId) {
             // Edit logs not enabled for this message
             this.container.logger.info(`A message was edited, but edit logs are not enabled: ${data}`)

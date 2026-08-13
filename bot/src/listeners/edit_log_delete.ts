@@ -2,7 +2,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { Listener } from "@sapphire/framework";
 import { EmbedBuilder, GatewayDispatchEvents, type GatewayMessageDeleteDispatch } from "discord.js";
 import { getMessage } from "../database.ts";
-import { getEditLogChannel } from "../config.ts";
+import { getServerConfig } from "../config.ts";
 
 
 @ApplyOptions<Listener.Options>(({ container }) => ({
@@ -18,7 +18,7 @@ export class MessageDeleteEditLogListener extends Listener {
             return
         }
         
-        const editLogChannelId = getEditLogChannel(msg.server_id)
+        const editLogChannelId = getServerConfig(msg.server_id)?.editLog?.editLogChannelId;
         if (!editLogChannelId) {
             // Edit logs not enabled for this message
             this.container.logger.info(`A message was deleted, but delete logs are not enabled: ${data}`)

@@ -2,9 +2,14 @@ import * as fs from 'fs';
 import * as YAML from 'yaml';
 
 
+export interface EditLogConfig {
+    editLogChannelId?: string,
+}
+
 export interface ServerConfig {
     guildId: string,
-    editLogChannelId?: string,
+    managerRole: string,
+    editLog?: EditLogConfig,
 }
 
 export interface Config {
@@ -21,19 +26,13 @@ export function getConfig() {
     return config;
 }
 
+export function getServerConfig(serverId?: string): ServerConfig | undefined {
+    return getConfig()
+        .servers
+        .find(s => s.guildId == serverId)
+}
+
 export function saveConfig(config: Config) {
     const configStr = YAML.stringify(config);
     fs.writeFileSync("../config.yml", configStr, "utf-8");
-}
-
-
-export function getEditLogChannel(serverId: string | undefined): string | undefined {
-    if (!serverId) {
-        return;
-    }
-
-    const config = getConfig();
-    const serverConfig = config.servers.find(s => s.guildId == serverId);
-
-    return serverConfig?.editLogChannelId;
 }
