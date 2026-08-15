@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   Group,
-  Loader,
   Menu,
   Select,
   Text,

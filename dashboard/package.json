@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mantine/core": "^9.3.0",
-    "@mantine/hooks": "^9.3.0",
+    "@mantine/core": "^9.5.1",
+    "@mantine/hooks": "^9.5.1",
     "discord.js": "^14.27.0",
     "lucide-react": "^1.31.0",
     "react": "^19.2.7",

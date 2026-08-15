@@ -1,0 +1,4 @@
+
+export function Settings() {
+    return <h1>SETTINGS SETTINGS SETTINGS YOUR STUFF SETTINGS SETTINGS SETTINGS</h1>
+}

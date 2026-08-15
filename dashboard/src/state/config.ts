@@ -14,7 +14,7 @@ export const useConfig: UseBoundStore<StoreApi<Config>> = create((set, get) => (
     configs: [],
     activeServerId: undefined,
     load: async () => {
-        const response = await fetch('/api/servers');
+        const response = await fetch('/api/config');
         const configs: ServerConfig[] = await response.json();
         const activeServer = configs[0]?.guildId;
 
