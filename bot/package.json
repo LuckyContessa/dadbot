@@ -1,18 +1,21 @@
 {
-  "name": "dadbot",
+  "name": "@dadbot/bot",
   "private": true,
-  "version": "1.0.0",
-  "description": "DadBot's just trying his best, man",
+  "version": "0.1.0",
   "type": "module",
+  "packageManager": "pnpm@11.5.2",
   "main": "src/index.ts",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.x",
+      "onFail": "download"
+    }
+  },
   "scripts": {
     "start": "tsx src/index.ts",
     "dev": "DEV=yes tsx --watch src/index.ts"
   },
-  "keywords": [],
-  "author": "Contessa",
-  "license": "ISC",
-  "packageManager": "pnpm@11.5.2",
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",
     "@types/better-sqlite3": "^9.6.0",

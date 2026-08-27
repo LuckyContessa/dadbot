@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as YAML from 'yaml';
 
+// TODO: Consolidate with the bot's definitions
 
 export interface EditLogConfig {
     editLogChannelId?: string,

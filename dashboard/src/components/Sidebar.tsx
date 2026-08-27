@@ -10,7 +10,7 @@ import {
   Scale,
   Logs,
 } from 'lucide-react';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 interface NavItem {
   id: string,
@@ -31,6 +31,7 @@ const navItems: NavItem[] = [
 
 export function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   var tab = location.pathname.replace("/","");
   if (tab == "") {
@@ -42,7 +43,7 @@ export function Sidebar() {
       {navItems.map((item) => {
         return <NavLink 
             key={item.id}
-            href={"#"+item.id}
+            onClick={() => navigate("/"+item.id)}
             label={item.label}
             leftSection={item.icon}
             active={tab == item.id}

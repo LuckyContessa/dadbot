@@ -1,0 +1,18 @@
+services:
+  bot:
+    build:
+      context: .
+      target: bot
+    image: ghcr.io/luckycontessa/dadbot-bot:latest
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+
+  dashboard:
+    build:
+      context: .
+      target: dashboard
+    image: ghcr.io/luckycontessa/dadbot-dashboard:latest
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:8014:8014

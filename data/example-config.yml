@@ -1,0 +1,8 @@
+botToken: "secret"
+clientId: "1234"
+clientSecret: "secret"
+servers:
+    - guildId: "1234"
+      managerRole: "Moderator"
+      editLog:
+        editLogChannelId: "1234"

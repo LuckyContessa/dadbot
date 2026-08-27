@@ -1,0 +1,13 @@
+{
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+:8014 {
+	root * /srv
+	encode gzip
+	file_server
+
+	reverse_proxy /api/* bot:8013
+}

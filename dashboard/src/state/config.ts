@@ -1,4 +1,4 @@
-import type { ServerConfig } from '../../../bot/src/config';
+import type { ServerConfig } from '../config';
 import { create, type StoreApi, type UseBoundStore } from 'zustand';
 
 

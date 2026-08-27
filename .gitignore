@@ -1,2 +1,4 @@
 data.db
 config.yml
+dist
+node_modules
