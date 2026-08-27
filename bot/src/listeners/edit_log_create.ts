@@ -11,7 +11,7 @@ import { saveMessage } from "../database.ts";
 }))
 export class MessageCreateEditLogListener extends Listener {
     public run(data: GatewayMessageCreateDispatch["d"]) {
-        this.container.logger.info(`CREATE: ${data}`);
+        this.container.logger.debug(`CREATE: ${JSON.stringify(data)}`);
 
         if (data.author.bot) {
             return

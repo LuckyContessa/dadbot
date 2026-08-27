@@ -1,5 +1,5 @@
 import "dotenv/config"
-import { SapphireClient } from "@sapphire/framework";
+import { LogLevel, SapphireClient } from "@sapphire/framework";
 import '@sapphire/plugin-api/register'; // Adds `api` field to SapphireClientOptions
 import { GatewayIntentBits, OAuth2Scopes } from "discord.js";
 import { getConfig } from "./config.ts";
@@ -25,6 +25,7 @@ const client = new SapphireClient({
             port: 8013,
         },
     },
+    logger: { level: LogLevel.Info },
     caseInsensitiveCommands: true,
     caseInsensitivePrefixes: true,
     defaultPrefix: "^",

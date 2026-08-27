@@ -11,21 +11,20 @@ import { getServerConfig } from "../config.ts";
 }))
 export class MessageUpdateEditLogListener extends Listener {
     public async run(data: GatewayMessageUpdateDispatch["d"]) {
-        this.container.logger.info(`UPDATE: ${data}`);
+        this.container.logger.debug(`UPDATE: ${JSON.stringify(data)}`);
         if (data.author.bot) {
+            return
+        }
+
+        const editLogChannelId = getServerConfig(data.guild_id)?.editLog?.editLogChannelId;
+        if (!editLogChannelId) {
+            this.container.logger.info(`A message was edited, but edit logs are not enabled: ${data}`)
             return
         }
 
         const oldMsg = getMessage(data.id);
         if (!oldMsg) {
             this.container.logger.info(`A message was updated, but we don't have the original: ${data}`)
-            return
-        }
-
-        const editLogChannelId = getServerConfig(data.guild_id)?.editLog?.editLogChannelId;
-        if (!editLogChannelId) {
-            // Edit logs not enabled for this message
-            this.container.logger.info(`A message was edited, but edit logs are not enabled: ${data}`)
             return
         }
 

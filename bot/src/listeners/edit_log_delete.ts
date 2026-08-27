@@ -11,7 +11,7 @@ import { getServerConfig } from "../config.ts";
 }))
 export class MessageDeleteEditLogListener extends Listener {
     public async run(data: GatewayMessageDeleteDispatch["d"]) {
-        this.container.logger.info(`EDIT: ${data}`);
+        this.container.logger.debug(`EDIT: ${JSON.stringify(data)}`);
         const msg = getMessage(data.id);
         if (!msg) {
             this.container.logger.info(`A message was deleted, but we don't have the original: ${data}`);
