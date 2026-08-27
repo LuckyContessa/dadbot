@@ -1,4 +1,4 @@
-import type { ServerConfig } from '../config';
+import { type ServerConfig } from '@dadbot/common';
 import { create, type StoreApi, type UseBoundStore } from 'zustand';
 
 

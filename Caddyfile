@@ -5,9 +5,12 @@
 }
 
 :8014 {
-	root * /srv
-	encode gzip
-	file_server
+	root /srv
+	route {
+		reverse_proxy /api* bot:8013
 
-	reverse_proxy /api/* bot:8013
+		encode gzip
+		try_files {path} /index.html
+		file_server
+	}
 }

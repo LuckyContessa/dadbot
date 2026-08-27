@@ -1,0 +1,4 @@
+{
+  "workspace": ["./bot", "./common", "./dashboard"],
+  "nodeModulesDir": "auto"
+}
