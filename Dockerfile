@@ -1,16 +1,11 @@
-FROM ghcr.io/pnpm/pnpm:11 as base
-RUN pnpm runtime set node 24 -g
-RUN apt-get update \
-    && apt-get install -y make sqlite3 python3
-
-FROM denoland/deno:latest as denobase
+FROM denoland/deno:latest as base
 RUN apt-get update \
     && apt-get install -y make sqlite3 python3
 
 # Bot
-FROM denobase as bot
+FROM base as bot
 WORKDIR /app/bot
-COPY bot/deno.jsonc bot/deno.lock bot/package.json ./
+COPY bot/deno.jsonc bot/deno.lock bot/package.json .
 RUN deno ci --prod --skip-types
 
 COPY bot .
@@ -19,14 +14,11 @@ CMD ["deno", "task", "start"]
 # Dashboard
 FROM base as build
 WORKDIR /app/dashboard
-COPY dashboard/package.json dashboard/pnpm-lock.yaml ./
-RUN pnpm fetch --prod --frozen-lockfile
+COPY dashboard/deno.lock dashboard/package.json .
+RUN deno ci --prod --skip-types
 
 COPY dashboard .
-# This is necessary because of the shared dependency on config.ts
-# TODO: Swap to monorepo and move to a common library
-# COPY bot ../bot
-RUN pnpm run build
+RUN deno task build
 
 FROM caddy as dashboard
 COPY --from=build /app/dashboard/dist /srv

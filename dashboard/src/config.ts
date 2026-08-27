@@ -1,6 +1,3 @@
-import * as fs from 'fs';
-import * as YAML from 'yaml';
-
 // TODO: Consolidate with the bot's definitions
 
 export interface EditLogConfig {
@@ -18,22 +15,4 @@ export interface Config {
     clientId: string,
     clientSecret: string,
     servers: ServerConfig[]
-}
-
-export function getConfig() {
-    const configStr = fs.readFileSync("../data/config.yml", "utf-8");
-    const config: Config = YAML.parse(configStr);
-
-    return config;
-}
-
-export function getServerConfig(serverId?: string): ServerConfig | undefined {
-    return getConfig()
-        .servers
-        .find(s => s.guildId == serverId)
-}
-
-export function saveConfig(config: Config) {
-    const configStr = YAML.stringify(config);
-    fs.writeFileSync("../data/config.yml", configStr, "utf-8");
 }
