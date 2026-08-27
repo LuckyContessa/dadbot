@@ -39,7 +39,7 @@ export class PingCommand extends Command {
     return interaction.editReply("Failed to retrieve ping =(");
   }
 
-  public async messageRun(message: Message) {
+  public override async messageRun(message: Message) {
     if (isTextBasedChannel(message.channel)) {
       const msg = await message.channel.send("Ping?");
       const diff = msg.createdTimestamp - message.createdTimestamp;

@@ -9,7 +9,7 @@ export class GetConfigRoute extends Route {
     if (!ensureAuth(request)) return response.error(HttpCodes.Unauthorized);
 
     const managedServers = []
-    for (var config of getConfig().servers) {
+    for (const config of getConfig().servers) {
       const guild = await this.container.client.guilds.fetch(config.guildId);
       const member = await guild?.members.fetch(request.auth!.id);
 

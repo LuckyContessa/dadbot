@@ -1,6 +1,5 @@
 import { Command } from "@sapphire/framework";
-import { isMessageInstance, isTextBasedChannel } from "@sapphire/discord.js-utilities";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, MessagePayload, userMention, type BaseMessageOptions, type InteractionReplyOptions, type Message } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, userMention, type BaseMessageOptions } from "discord.js";
 import { getConfig } from "../config.ts";
 
 interface GameState {
@@ -112,7 +111,7 @@ function renderGame(gameState: GameState): BaseMessageOptions {
   if (gameState.phase == 'running') {
     if (gameState.target == gameState.previous) {
       description += "Lucky!! Neither higher nor lower...\n"
-    } else if (!!gameState.previous) {
+    } else if (gameState.previous) {
       description += "Correct!!\n"
     }
     description += "Will the next number be higher or lower? (1-22)"

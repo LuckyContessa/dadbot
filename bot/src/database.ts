@@ -1,5 +1,4 @@
 import Database from "better-sqlite3";
-import type { Message } from "discord.js";
 
 const db = Database("../data/data.db")
 // TODO: Sweep older messages

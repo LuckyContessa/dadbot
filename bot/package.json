@@ -3,24 +3,10 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "packageManager": "pnpm@11.5.2",
   "main": "src/index.ts",
-  "devEngines": {
-    "runtime": {
-      "name": "node",
-      "version": "24.x",
-      "onFail": "download"
-    }
-  },
   "scripts": {
-    "start": "tsx src/index.ts",
-    "dev": "DEV=yes tsx --watch src/index.ts"
-  },
-  "devDependencies": {
-    "@tsconfig/node24": "^24.0.4",
-    "@types/better-sqlite3": "^9.6.0",
-    "tsx": "^4.22.4",
-    "typescript": "^6.0.3"
+    "start": "deno run -P src/index.ts",
+    "dev": "DEV=yes DENO_TRACE_PERMISSIONS=1 deno watch -P src/index.ts"
   },
   "dependencies": {
     "@sapphire/decorators": "^6.2.0",

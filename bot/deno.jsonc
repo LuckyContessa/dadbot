@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "default": {
+      "env": true,
+      "net": true, // For API requests from dashboard
+      "sys": true, // sqlite3 checks the number of CPUs
+      "ffi": true, // sqlite3 is a system library invoked via ffi
+      "read": [".", "../data"]
+    }
+  }
+}

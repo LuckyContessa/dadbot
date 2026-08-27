@@ -3,14 +3,18 @@ RUN pnpm runtime set node 24 -g
 RUN apt-get update \
     && apt-get install -y make sqlite3 python3
 
+FROM denoland/deno:latest as denobase
+RUN apt-get update \
+    && apt-get install -y make sqlite3 python3
+
 # Bot
-FROM base as bot
+FROM denobase as bot
 WORKDIR /app/bot
-COPY bot/package.json bot/pnpm-lock.yaml bot/pnpm-workspace.yaml ./
-RUN pnpm fetch --prod --frozen-lockfile
+COPY bot/deno.jsonc bot/deno.lock bot/package.json ./
+RUN deno ci --prod --skip-types
 
 COPY bot .
-CMD ["pnpm", "start"]
+CMD ["deno", "task", "start"]
 
 # Dashboard
 FROM base as build
