@@ -19,7 +19,7 @@ export class PingCommand extends Command {
     registry.registerChatInputCommand((builder) => {
       builder.setName(this.name)
         .setDescription(this.description)
-    }, {"idHints": ["1509727358473605281", "1509734378388066426"], guildIds})
+    }, {"idHints": [], guildIds})
   }
 
   public override async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
