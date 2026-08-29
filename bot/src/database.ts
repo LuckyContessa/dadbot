@@ -1,9 +1,7 @@
 import Database from "better-sqlite3";
 
 const db = Database("../data/data.db")
-// TODO: Sweep older messages
 
-// CREATE TABLE messages(id INTEGER PRIMARY KEY ASC, discord_id TEXT, channel_id TEXT, server_id TEXT, author TEXT, content TEXT, timestamp NUMERIC);
 export interface DbMessage {
     id?: number,
     discord_id: string,
@@ -13,6 +11,17 @@ export interface DbMessage {
     content: string,
     timestamp: number,
 }
+db.prepare(`CREATE TABLE IF NOT EXISTS messages(
+    id INTEGER PRIMARY KEY ASC, 
+    discord_id TEXT, 
+    channel_id TEXT, 
+    server_id TEXT, 
+    author TEXT, 
+    content TEXT, 
+    timestamp NUMERIC
+);`).run();
+
+// TODO: Sweep older messages
 
 const getMessageStatement = db.prepare("SELECT * FROM messages WHERE discord_id = ?");
 export function getMessage(discordId: string): DbMessage {
