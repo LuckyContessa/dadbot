@@ -6,3 +6,8 @@ servers:
       managerRole: "Moderator"
       editLog:
         editLogChannelId: "1234"
+      reactionRoles:
+        sources:
+          - messageId: "1234"
+            reaction: 🍑
+            role: test-role
