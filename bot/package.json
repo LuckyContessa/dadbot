@@ -6,7 +6,7 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "deno run -P src/index.ts",
-    "dev": "DEV=yes DENO_TRACE_PERMISSIONS=1 deno watch -P src/index.ts"
+    "dev": "DENO_TRACE_PERMISSIONS=1 deno watch -P src/index.ts"
   },
   "dependencies": {
     "@sapphire/decorators": "^6.2.0",

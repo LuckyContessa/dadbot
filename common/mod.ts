@@ -1,12 +1,14 @@
 
 /** Top level config object, stored in a config.yml */
 export interface Config {
+    /** Switch into development mode */
+    devMode?: boolean
     /** Secret discord bot token */
-    botToken: string,
+    botToken?: string,
     /** Secret discord clientId */
-    clientId: string,
+    clientId?: string,
     /** Secret discord client secret */
-    clientSecret: string,
+    clientSecret?: string,
     /** Per-server configuration */
     servers: ServerConfig[]
 }

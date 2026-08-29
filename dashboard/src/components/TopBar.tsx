@@ -10,9 +10,9 @@ import {
 } from '@mantine/core';
 import { ChevronDown, Globe, LogIn, LogOut } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useAuth } from '../state/auth';
+import { useAuth } from '../state/auth.ts';
 import { useSearchParams } from 'react-router';
-import { useConfig } from '../state/config';
+import { useConfig } from '../state/config.ts';
 
 
 export function ServerSelector() {
@@ -23,7 +23,7 @@ export function ServerSelector() {
     ? <Avatar size={25} radius="sm" src={`https://cdn.discordapp.com/icons/${activeGuild.id}/${activeGuild.icon}`} />
     : <Globe size={14} />
 
-  const managedGuilds = config.configs
+  const managedGuilds = config.servers
       .map(c => auth.guilds.find(g => g.id == c.guildId))
       .filter(g => g != undefined);
 
@@ -86,7 +86,7 @@ export function UserMenu() {
 
 export function TopBar({burger}: {burger: React.ReactElement}) {
   const authState = useAuth();
-  const servers = useConfig();
+  const config = useConfig();
   const user = authState.user;
   const [loggingIn, setLoggingIn] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -96,13 +96,14 @@ export function TopBar({burger}: {burger: React.ReactElement}) {
     if (code) { 
       setSearchParams("")
       authState.login(code)
-        .then(() => servers.load())
+        .then(() => config.load())
         .then(() => setLoggingIn(false));
     } else {
       authState.load()
-        .then(() => servers.load())
+        .then(() => config.load())
         .then(() => setLoggingIn(false));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const login = useCallback(() => {
@@ -111,11 +112,11 @@ export function TopBar({burger}: {burger: React.ReactElement}) {
       ['redirect_uri', 'http://127.0.0.1:5173'], // TODO: Detect dev mode
       ['response_type', 'code'],
       ['scope', ['identify', 'guilds'].join(' ')],
-      ['client_id', '1509416040025817158'] // TODO: Load from config.yml
+      ['client_id', config.clientId]
     ]).toString();
 
-    window.location.replace(oauthURL);
-  }, []);
+    globalThis.location.replace(oauthURL);
+  }, [config]);
 
   return (
     <Flex
@@ -143,7 +144,7 @@ export function TopBar({burger}: {burger: React.ReactElement}) {
         <ServerSelector />
         <UserMenu />
       </Group>}
-      {!user && <Button leftSection={<LogIn size={14} />} loading={loggingIn} variant="outline" onClick={login}>
+      {!user && <Button leftSection={<LogIn size={14} />} loading={loggingIn || !config.clientId} variant="outline" onClick={login}>
         Log in
       </Button>}
     </Flex>

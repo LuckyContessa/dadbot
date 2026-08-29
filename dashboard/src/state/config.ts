@@ -1,9 +1,8 @@
-import { type ServerConfig } from '@dadbot/common';
+import type { Config as BotConfig, ServerConfig } from '@dadbot/common';
 import { create, type StoreApi, type UseBoundStore } from 'zustand';
 
 
-interface Config {
-    configs: ServerConfig[],
+interface Config extends BotConfig {
     activeServerId?: string, // TODO: Maybe move this somewhere else
     load: () => Promise<void>,
     setActiveServerId: (activeServer: string) => void,
@@ -11,18 +10,20 @@ interface Config {
 }
 
 export const useConfig: UseBoundStore<StoreApi<Config>> = create((set, get) => ({
-    configs: [],
+    devMode: false,
+    clientId: undefined,
+    servers: [],
     activeServerId: undefined,
     load: async () => {
         const response = await fetch('/api/config');
-        const configs: ServerConfig[] = await response.json();
-        const activeServer = configs[0]?.guildId;
+        const botConfig: BotConfig = await response.json();
+        const activeServer = botConfig.servers[0]?.guildId;
 
-        set({configs, activeServerId: activeServer})
+        set({...botConfig, activeServerId: activeServer})
     },
     setActiveServerId: (guildId: string) => set({activeServerId: guildId}),
     getActiveServerConfig: () => {
         const self = get();
-        return self.configs.find(s => s.guildId == self.activeServerId)
+        return self.servers.find(s => s.guildId == self.activeServerId)
     }
 }));
