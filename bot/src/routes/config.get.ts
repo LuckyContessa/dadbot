@@ -13,6 +13,7 @@ export class GetConfigRoute extends Route {
     // We'll send them general config though.
     const allowedConfig: Config = {
       devMode: config.devMode,
+      homeUrl: config.homeUrl,
       clientId: config.clientId,
       servers: [],
     }

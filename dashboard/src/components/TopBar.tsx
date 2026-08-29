@@ -107,9 +107,14 @@ export function TopBar({burger}: {burger: React.ReactElement}) {
   }, [])
 
   const login = useCallback(() => {
+    if (!config.homeUrl || !config.clientId) {
+      console.log("Can't log in, we dont' have bot config yet.")
+      return
+    }
+
     const oauthURL = new URL("https://discord.com/oauth2/authorize");
     oauthURL.search = new URLSearchParams([
-      ['redirect_uri', 'http://127.0.0.1:5173'], // TODO: Detect dev mode
+      ['redirect_uri', config.homeUrl], // TODO: Detect dev mode
       ['response_type', 'code'],
       ['scope', ['identify', 'guilds'].join(' ')],
       ['client_id', config.clientId]

@@ -3,6 +3,8 @@
 export interface Config {
     /** Switch into development mode */
     devMode?: boolean
+    /** The url on which dadbot should listen */
+    homeUrl?: string,
     /** Secret discord bot token */
     botToken?: string,
     /** Secret discord clientId */

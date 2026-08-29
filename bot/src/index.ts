@@ -16,8 +16,7 @@ const client = new SapphireClient({
             secret: config.clientSecret!,
             cookie: 'DADBOT_AUTH',
             scopes: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
-            redirect: config.devMode ? "http://127.0.0.1:5173" : undefined,
-            domainOverwrite: config.devMode ? '127.0.0.1' : undefined
+            redirect: config.homeUrl!,
         },
         prefix: '/api',
         listenOptions: {

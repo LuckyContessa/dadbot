@@ -6,6 +6,7 @@ import deno from '@deno/vite-plugin'
 export default defineConfig({
   plugins: [react(), deno()],
   server: {
+    port: 8014,
     proxy: {
       '/api': 'http://127.0.0.1:8013'
     }
