@@ -112,7 +112,7 @@ export function TopBar({burger}: {burger: React.ReactElement}) {
             fw={700}
             size="xl"
             style={{ fontFamily: 'monospace' }}>
-          Dadbot
+          DadBot
         </Text>
       </Group>
 

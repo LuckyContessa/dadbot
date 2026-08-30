@@ -22,13 +22,17 @@ export class GetConfigRoute extends Route {
     // Logged in users may have access to server configs
     const allowedServers = []
     for (const serverConfig of config.servers) {
-      const guild = await this.container.client.guilds.fetch(serverConfig.guildId);
-      const member = await guild?.members.fetch(request.auth!.id);
-
-      const isAdmin = member.permissions.has(PermissionFlagsBits.Administrator);
-      const isManager = member?.roles.cache.some(role => role.name == serverConfig.managerRole);
-      if (isAdmin || isManager) {
-        allowedServers.push(serverConfig)
+      try {
+        const guild = await this.container.client.guilds.fetch(serverConfig.guildId);
+        const member = await guild?.members.fetch(request.auth!.id);
+  
+        const isAdmin = member.permissions.has(PermissionFlagsBits.Administrator);
+        const isManager = member?.roles.cache.some(role => role.name == serverConfig.managerRole);
+        if (isAdmin || isManager) {
+          allowedServers.push(serverConfig)
+        }
+      } catch(err) {
+        this.container.logger.error(`Unable to validate user against server config, guildId = '${serverConfig.guildId}'\n${JSON.stringify(err)}`)
       }
     }
 
