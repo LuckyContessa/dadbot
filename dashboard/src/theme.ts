@@ -1,66 +1,244 @@
-import { createTheme } from '@mantine/core';
+/**
+ * gruvbox-theme.ts
+ *
+ * A Mantine theme built from morhetz/gruvbox.
+ * Palette values are taken verbatim from colors/gruvbox.vim.
+ *
+ * Usage:
+ *   import { MantineProvider } from '@mantine/core';
+ *   import { gruvboxTheme, gruvboxCssVariablesResolver } from './gruvbox-theme';
+ *
+ *   <MantineProvider
+ *     theme={gruvboxTheme}
+ *     cssVariablesResolver={gruvboxCssVariablesResolver}
+ *     defaultColorScheme="dark"
+ *   >
+ *     {children}
+ *   </MantineProvider>
+ */
 
-export const theme = createTheme({
+import {
+  createTheme,
+  type CSSVariablesResolver,
+  type MantineColorsTuple,
+} from '@mantine/core';
+
+/* ---------------------------------------------------------------------------
+ * Raw gruvbox palette (colors/gruvbox.vim)
+ * ------------------------------------------------------------------------- */
+
+export const gruvbox = {
+  dark0Hard: '#1d2021',
+  dark0: '#282828',
+  dark0Soft: '#32302f',
+  dark1: '#3c3836',
+  dark2: '#504945',
+  dark3: '#665c54',
+  dark4: '#7c6f64',
+
+  gray: '#928374',
+
+  light0Hard: '#f9f5d7',
+  light0: '#fbf1c7',
+  light0Soft: '#f2e5bc',
+  light1: '#ebdbb2',
+  light2: '#d5c4a1',
+  light3: '#bdae93',
+  light4: '#a89984',
+
+  brightRed: '#fb4934',
+  brightGreen: '#b8bb26',
+  brightYellow: '#fabd2f',
+  brightBlue: '#83a598',
+  brightPurple: '#d3869b',
+  brightAqua: '#8ec07c',
+  brightOrange: '#fe8019',
+
+  neutralRed: '#cc241d',
+  neutralGreen: '#98971a',
+  neutralYellow: '#d79921',
+  neutralBlue: '#458588',
+  neutralPurple: '#b16286',
+  neutralAqua: '#689d6a',
+  neutralOrange: '#d65d0e',
+
+  fadedRed: '#9d0006',
+  fadedGreen: '#79740e',
+  fadedYellow: '#b57614',
+  fadedBlue: '#076678',
+  fadedPurple: '#8f3f71',
+  fadedAqua: '#427b58',
+  fadedOrange: '#af3a03',
+} as const;
+
+/* ---------------------------------------------------------------------------
+ * Color tuples
+ *
+ * gruvbox gives three steps per hue (bright / neutral / faded) rather than ten,
+ * so each tuple anchors those three at fixed indices and fills the rest in:
+ *
+ *   0–3  tints, mixed toward light0 (#fbf1c7) — cream, not white, so tints stay warm
+ *   4    bright  — the dark-mode accent
+ *   6    neutral — the 256-color terminal accent
+ *   8    faded   — the light-mode accent
+ *   9    faded mixed toward dark0_hard
+ *
+ * Pair this with primaryShade { light: 8, dark: 4 } and Mantine reproduces
+ * gruvbox's own bright/faded swap when the color scheme changes.
+ * ------------------------------------------------------------------------- */
+
+const red: MantineColorsTuple = ['#fbcfaa', '#fbb18f', '#fb9072', '#fb6c53', '#fb4934', '#e43628', '#cc241d', '#b41212', '#9d0006', '#700b0f'];
+const orange: MantineColorsTuple = ['#fcdaa4', '#fcc685', '#fdaf62', '#fd983e', '#fe8019', '#ea6e14', '#d65d0e', '#c24c08', '#af3a03', '#7c310e'];
+const yellow: MantineColorsTuple = ['#fbe7a9', '#fbdd8d', '#fad36f', '#fac84f', '#fabd2f', '#e8ab28', '#d79921', '#c6881a', '#b57614', '#805819'];
+const green: MantineColorsTuple = ['#eee6a7', '#e2dc8a', '#d4d26a', '#c6c648', '#b8bb26', '#a8a920', '#98971a', '#888614', '#79740e', '#595715'];
+const aqua: MantineColorsTuple = ['#e5e7b8', '#d2deaa', '#bcd59c', '#a5ca8c', '#8ec07c', '#7bae73', '#689d6a', '#558c61', '#427b58', '#355b45'];
+const blue: MantineColorsTuple = ['#e3e2be', '#cdd4b5', '#b5c5ac', '#9cb5a2', '#83a598', '#649590', '#458588', '#267680', '#076678', '#0f4e5a'];
+const purple: MantineColorsTuple = ['#f3dcbe', '#ecc8b6', '#e4b3ad', '#db9ca4', '#d3869b', '#c27490', '#b16286', '#a0507c', '#8f3f71', '#673455'];
+
+/**
+ * The neutral ramp. Mantine reads specific indices out of `dark`, so the
+ * mapping here is load-bearing:
+ *   dark[0] -> body text            = light1 #ebdbb2 (gruvbox `Normal` fg)
+ *   dark[2] -> dimmed text          = gray   #928374 (gruvbox `Comment`)
+ *   dark[4] -> default border       = dark3  #665c54 (gruvbox `Visual`)
+ *   dark[6] -> hover / input bg     = dark1  #3c3836 (gruvbox `CursorLine`)
+ *   dark[7] -> body background      = dark0  #282828 (gruvbox `Normal` bg)
+ *   dark[8] -> recessed surfaces    = dark0_hard #1d2021
+ */
+const dark: MantineColorsTuple = [
+  '#ebdbb2', // 0  light1
+  '#d5c4a1', // 1  light2
+  '#928374', // 2  gray
+  '#7c6f64', // 3  dark4
+  '#665c54', // 4  dark3
+  '#504945', // 5  dark2
+  '#3c3836', // 6  dark1
+  '#282828', // 7  dark0        <- body background
+  '#1d2021', // 8  dark0_hard
+  '#141617', // 9  below hard
+];
+
+/** Warm tan neutrals, for `color="gray"` and muted UI. */
+const gray: MantineColorsTuple = [
+  '#f2e6be', '#e6d8b2', '#d5c4a1', '#bdae93', '#a89984',
+  '#928374', '#7c6f64', '#665c54', '#504945', '#3c3836',
+];
+
+/* ---------------------------------------------------------------------------
+ * Theme
+ * ------------------------------------------------------------------------- */
+
+const MONO =
+  '"Fira Mono", "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace';
+
+export const gruvboxTheme = createTheme({
   colors: {
-    gruvboxbg: [
-      '#1d2021', '#282822', '#32302f', '#3c3836', '#504945',
-      '#5f4f44', '#66574c', '#7c6f64', '#928174', '#a89984',
-    ],
-    gruvboxfg: [
-      '#a89984', '#b8ab99', '#c9baaf', '#d8c8b2', '#e7d9be',
-      '#f0e0c8', '#f4eace', '#f9f4da', '#fdf1d6', '#fdf4e6',
-    ],
-    gruvboxred: [
-      '#5e0000', '#7a0000', '#950000', '#b10000', '#cc0d0d',
-      '#e53935', '#f0605e', '#f89080', '#faaaa0', '#fbc4bc',
-    ],
-    gruvboxorange: [
-      '#4d2800', '#653400', '#7d4100', '#944d00', '#ac5a00',
-      '#c46f1a', '#da8538', '#e69b57', '#f0b176', '#f9c795',
-    ],
-    gruvboxyellow: [
-      '#4d3300', '#604000', '#734d00', '#865a00', '#996700',
-      '#b07608', '#c88a28', '#dba549', '#e6b968', '#efcc87',
-    ],
-    gruvboxblue: [
-      '#003848', '#004e63', '#00647e', '#007a99', '#0090b4',
-      '#1a9fb8', '#40b3c4', '#65c5cf', '#8bd7db', '#b0e9e7',
-    ],
-    gruvboxpurple: [
-      '#3a102b', '#4e1639', '#621c47', '#762254', '#8a2862',
-      '#a03270', '#b64284', '#c95897', '#d96eaa', '#e686bc',
-    ],
-    gruvboxaqua: [
-      '#00433a', '#00594e', '#006f62', '#008576', '#009b8a',
-      '#1ab09e', '#3dc6b2', '#62dccb', '#86e8df', '#aaeff4',
-    ],
-    gruvboxgreen: [
-      '#303000', '#424200', '#545400', '#666600', '#787800',
-      '#8e8e0a', '#a6a64d', '#b7b769', '#c5c582', '#d1d19a',
-    ],
+    dark,
+    gray,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    // gruvbox names
+    aqua,
+    purple,
+    // gruvbox has seven hues; the remaining Mantine defaults alias onto the
+    // nearest one so `color="teal"`, `color="grape"` etc. stay on-palette.
+    teal: aqua,
+    cyan: aqua,
+    lime: green,
+    indigo: blue,
+    violet: purple,
+    grape: purple,
+    pink: purple,
   },
+
   primaryColor: 'orange',
-  primaryShade: { light: 0, dark: 1 },
-  fontSizes: {
-    xs: '0.75rem', sm: '0.8125rem', md: '0.875rem', lg: '1rem',
-    xl: '1.125rem', '2xl': '1.25rem', '3xl': '1.5625rem',
-    '4xl': '1.9375rem', '5xl': '2.4414rem', '6xl': '3.0518rem',
-  },
+
+  // Dark scheme uses the bright accent, light scheme the faded one — the same
+  // swap gruvbox.vim performs in `Setup Colors`.
+  primaryShade: { light: 8, dark: 4 },
+
+  white: gruvbox.light0, // #fbf1c7
+  black: gruvbox.dark0Hard, // #1d2021
+
+  // Bright gruvbox accents are luminous; let Mantine flip filled-variant text
+  // to near-black on them instead of washing it out in cream.
+  autoContrast: true,
+  luminanceThreshold: 0.45,
+
+  fontFamily:
+    '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+  fontFamilyMonospace: MONO,
+
   headings: {
-    fontFamily: 'SF Mono, SFMono-Regular, ui-monospace, DejaVu Sans Mono, Consolas, Menlo, monospace',
-    fontWeight: '600',
+    // Deliberate: gruvbox is an editor theme, so headings run in the mono face.
+    // Swap this to `undefined` if you want headings to inherit `fontFamily`.
+    fontFamily: MONO,
+    fontWeight: '700',
   },
-  components: {
-    Button: { defaultProps: { variant: 'filled', radius: 'sm' } },
-    Card: { defaultProps: { withBorder: true, radius: 'md' } },
-    Badge: { defaultProps: { radius: 'sm' } },
-    ActionIcon: { defaultProps: { variant: 'transparent', color: 'gruvboxfg' } },
-    Tooltip: { defaultProps: { withArrow: true } },
-    Divider: { defaultProps: { color: 'gruvboxbg3' } },
-    TextInput: { defaultProps: { radius: 'sm', variant: 'filled' } },
-    Select: { defaultProps: { radius: 'sm', variant: 'filled' } },
-    Switch: { defaultProps: { size: 'md' } },
-    Group: { defaultProps: { spacing: 'md' } },
-    Stack: { defaultProps: { spacing: 'md' } },
+
+  // Terminal lineage: corners stay nearly square.
+  defaultRadius: 'xs',
+  radius: {
+    xs: '2px',
+    sm: '3px',
+    md: '4px',
+    lg: '6px',
+    xl: '10px',
+  },
+
+  defaultGradient: {
+    from: 'orange.4',
+    to: 'red.4',
+    deg: 45,
+  },
+
+  // Neutral shadows read as grime over a #282828 body; these are near-black.
+  shadows: {
+    xs: '0 1px 2px rgba(20, 22, 23, 0.5)',
+    sm: '0 1px 3px rgba(20, 22, 23, 0.6), 0 6px 10px -4px rgba(20, 22, 23, 0.45)',
+    md: '0 1px 3px rgba(20, 22, 23, 0.6), 0 14px 20px -6px rgba(20, 22, 23, 0.5)',
+    lg: '0 1px 3px rgba(20, 22, 23, 0.6), 0 22px 32px -10px rgba(20, 22, 23, 0.55)',
+    xl: '0 1px 3px rgba(20, 22, 23, 0.6), 0 32px 48px -14px rgba(20, 22, 23, 0.6)',
+  },
+
+  cursorType: 'pointer',
+
+  other: { gruvbox },
+});
+
+/* ---------------------------------------------------------------------------
+ * Semantic variable overrides
+ *
+ * Most semantic variables derive correctly from the tuples above. These few
+ * don't, because Mantine's defaults assume a neutral-gray dark scheme.
+ * ------------------------------------------------------------------------- */
+
+export const gruvboxCssVariablesResolver: CSSVariablesResolver = (theme) => ({
+  variables: {},
+
+  light: {
+    '--mantine-color-body': theme.other.gruvbox.light0,
+    '--mantine-color-text': theme.other.gruvbox.dark1,
+    '--mantine-color-dimmed': theme.other.gruvbox.gray,
+    '--mantine-color-error': theme.other.gruvbox.fadedRed,
+    '--mantine-color-anchor': theme.other.gruvbox.fadedBlue,
+    '--mantine-color-default': theme.other.gruvbox.light1,
+    '--mantine-color-default-hover': theme.other.gruvbox.light2,
+    '--mantine-color-default-border': theme.other.gruvbox.light3,
+  },
+
+  dark: {
+    '--mantine-color-body': theme.other.gruvbox.dark0, // #282828
+    '--mantine-color-text': theme.other.gruvbox.light1, // #ebdbb2
+    '--mantine-color-dimmed': theme.other.gruvbox.gray, // #928374, gruvbox `Comment`
+    '--mantine-color-error': theme.other.gruvbox.brightRed,
+    '--mantine-color-anchor': theme.other.gruvbox.brightBlue,
+    '--mantine-color-default': theme.other.gruvbox.dark1, // #3c3836
+    '--mantine-color-default-hover': theme.other.gruvbox.dark2, // #504945
+    '--mantine-color-default-border': theme.other.gruvbox.dark3, // #665c54
+    '--mantine-color-placeholder': theme.other.gruvbox.dark4,
   },
 });

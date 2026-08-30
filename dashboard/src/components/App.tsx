@@ -3,24 +3,24 @@ import {
   Burger,
   MantineProvider,
 } from '@mantine/core';
-import { theme } from '../theme';
-import { TopBar } from './TopBar';
-import { Sidebar } from './Sidebar';
+import { gruvboxCssVariablesResolver, gruvboxTheme } from '../theme.ts';
+import { TopBar } from './TopBar.tsx';
+import { Sidebar } from './Sidebar.tsx';
 import { useDisclosure } from '@mantine/hooks';
 import { Route, Routes } from 'react-router';
-import { Overview } from '../pages/overview';
-import { Logging } from '../pages/logging';
-import { Games } from '../pages/games';
-import { ReactionRoles } from '../pages/reactionroles';
-import { Moderation } from '../pages/moderation';
-import { GIFs } from '../pages/gifs';
-import { Settings } from '../pages/settings';
+import { Overview } from '../pages/overview.tsx';
+import { Logging } from '../pages/logging.tsx';
+import { Games } from '../pages/games.tsx';
+import { ReactionRoles } from '../pages/reactionroles.tsx';
+import { Moderation } from '../pages/moderation.tsx';
+import { GIFs } from '../pages/gifs.tsx';
+import { Settings } from '../pages/settings.tsx';
 
 export function App() {
   const [opened, {toggle}] = useDisclosure()
 
   return (
-    <MantineProvider theme={theme} defaultColorScheme="dark">
+    <MantineProvider theme={gruvboxTheme} cssVariablesResolver={gruvboxCssVariablesResolver} defaultColorScheme="dark">
       <AppShell
         padding="md"
         header={{ height: 56 }}
@@ -32,7 +32,7 @@ export function App() {
               hiddenFrom='sm'
               size='sm' />} />
         </AppShell.Header>
-        <AppShell.Navbar p="md">
+        <AppShell.Navbar>
           <Sidebar />
         </AppShell.Navbar>
         <AppShell.Main

@@ -1,3 +1,5 @@
+devMode: true
+homeUrl: "http://127.0.0.1:8014"
 botToken: "secret"
 clientId: "1234"
 clientSecret: "secret"

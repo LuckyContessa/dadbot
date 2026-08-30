@@ -4,44 +4,15 @@ import {
   Flex,
   Group,
   Menu,
-  Select,
   Text,
   UnstyledButton,
 } from '@mantine/core';
-import { ChevronDown, Globe, LogIn, LogOut } from 'lucide-react';
+import { ChevronDown, LogIn, LogOut } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../state/auth.ts';
 import { useSearchParams } from 'react-router';
 import { useConfig } from '../state/config.ts';
 
-
-export function ServerSelector() {
-  const auth = useAuth()
-  const config = useConfig();
-  const activeGuild = auth?.guilds.find(g => g.id == config.activeServerId);
-  const icon = activeGuild?.icon
-    ? <Avatar size={25} radius="sm" src={`https://cdn.discordapp.com/icons/${activeGuild.id}/${activeGuild.icon}`} />
-    : <Globe size={14} />
-
-  const managedGuilds = config.servers
-      .map(c => auth.guilds.find(g => g.id == c.guildId))
-      .filter(g => g != undefined);
-
-  return (
-      <Select
-        data={managedGuilds.map((g) => ({
-          value: g.id,
-          label: `${g.name}`,
-        }))}
-        value={config.activeServerId}
-        onChange={(id) => {if (id) config.setActiveServerId(id)}}
-        placeholder="Select server"
-        size="sm"
-        leftSection={icon}
-        allowDeselect={false}
-      />
-  )
-}
 
 export function UserMenu() {
   const authState = useAuth();
@@ -135,20 +106,17 @@ export function TopBar({burger}: {burger: React.ReactElement}) {
       }}
     >
       <Group gap="sm">
-        {/* DadBot Logo */}
         {burger}
+        <Avatar src="/DadTie.svg" alt="DadBot logo" />
         <Text
             fw={700}
-            size="lg"
+            size="xl"
             style={{ fontFamily: 'monospace' }}>
           Dadbot
         </Text>
       </Group>
 
-      {user && <Group gap="sm">
-        <ServerSelector />
-        <UserMenu />
-      </Group>}
+      {user && <UserMenu />}
       {!user && <Button leftSection={<LogIn size={14} />} loading={loggingIn || !config.clientId} variant="outline" onClick={login}>
         Log in
       </Button>}

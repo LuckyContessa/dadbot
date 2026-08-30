@@ -1,5 +1,7 @@
 import {
+Avatar,
   NavLink,
+  Select,
 } from '@mantine/core';
 import {
   BarChart3,
@@ -9,8 +11,11 @@ import {
   Users,
   Scale,
   Logs,
+  Globe,
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router';
+import { useAuth } from "../state/auth.ts";
+import { useConfig } from "../state/config.ts";
 
 interface NavItem {
   id: string,
@@ -33,10 +38,8 @@ export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  var tab = location.pathname.replace("/","");
-  if (tab == "") {
-    tab = "overview"
-  }
+  const path = location.pathname.replace("/","");
+  const tab = path == "" ? "overview" : path;
 
   return (
     <>
@@ -49,6 +52,43 @@ export function Sidebar() {
             active={tab == item.id}
         />;
       })}
+      <ServerSelector />
     </>
   );
+}
+
+export function ServerSelector() {
+  const auth = useAuth()
+  const config = useConfig();
+
+  // Only logged in users get to select a server
+  if (!auth.user) {
+    return
+  }
+
+  const activeGuild = auth?.guilds.find(g => g.id == config.activeServerId);
+  const icon = activeGuild?.icon
+    ? <Avatar size={25} radius="sm" src={`https://cdn.discordapp.com/icons/${activeGuild.id}/${activeGuild.icon}`} />
+    : <Globe size={14} />
+
+  const managedGuilds = config.servers
+      .map(c => auth.guilds.find(g => g.id == c.guildId))
+      .filter(g => g != undefined);
+
+  return (
+      <Select
+        data={managedGuilds.map((g) => ({
+          value: g.id,
+          label: `${g.name}`,
+        }))}
+        value={config.activeServerId}
+        onChange={(id) => {if (id) config.setActiveServerId(id)}}
+        placeholder="Select server"
+        size="sm"
+        leftSection={icon}
+        allowDeselect={false}
+        comboboxProps={{ position: 'top' }}
+        mt="auto"
+      />
+  )
 }
