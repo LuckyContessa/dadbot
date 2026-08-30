@@ -11,6 +11,8 @@ export interface Config {
     clientId?: string,
     /** Secret discord client secret */
     clientSecret?: string,
+    /** Bot owner has access to everything */
+    ownerUserId?: string,
     /** Per-server configuration */
     servers: ServerConfig[]
 }

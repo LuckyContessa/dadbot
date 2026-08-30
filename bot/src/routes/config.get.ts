@@ -26,9 +26,10 @@ export class GetConfigRoute extends Route {
         const guild = await this.container.client.guilds.fetch(serverConfig.guildId);
         const member = await guild?.members.fetch(request.auth!.id);
   
+        const isOwner = member.user.id == config.ownerUserId;
         const isAdmin = member.permissions.has(PermissionFlagsBits.Administrator);
         const isManager = member?.roles.cache.some(role => role.name == serverConfig.managerRole);
-        if (isAdmin || isManager) {
+        if (isOwner || isAdmin || isManager) {
           allowedServers.push(serverConfig)
         }
       } catch(err) {
