@@ -1,3 +1,4 @@
 
-export type * from './config.ts'
-export type * from './events.ts'
+export * from './config.ts'
+export * from './approx.ts'
+export * from './events.ts'

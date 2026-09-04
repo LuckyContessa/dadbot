@@ -39,7 +39,9 @@ export class PingCommand extends Command {
     return interaction.editReply("Failed to retrieve ping =(");
   }
 
+  //@ts-ignore: TODO: Fix weird deno type errors
   public override async messageRun(message: Message) {
+    //@ts-ignore: TODO: Fix weird deno type errors
     if (isTextBasedChannel(message.channel)) {
       const msg = await message.channel.send("Ping?");
       const diff = msg.createdTimestamp - message.createdTimestamp;

@@ -28,15 +28,15 @@ export class MessageUpdateEditLogListener extends Listener {
             return
         }
 
-        const author = await this.container.client.users.fetch(oldMsg.author);
+        const author = await this.container.client.users.fetch(oldMsg.author.id);
         const logChannel = await this.container.client.channels.fetch(editLogChannelId);
 
         const embed = new EmbedBuilder()
             .setColor(0xffaa00)
-            .setAuthor({name: "Message Edited", url: `https://discord.com/channels/${oldMsg.server_id}/${oldMsg.channel_id}/${oldMsg.discord_id}`})
+            .setAuthor({name: "Message Edited", url: `https://discord.com/channels/${oldMsg.guildId}/${oldMsg.channelId}/${oldMsg.id}`})
             .setDescription(oldMsg.content)
             .setFooter({text: author.displayName})
-            .setTimestamp(oldMsg.timestamp);
+            .setTimestamp(oldMsg.createdTimestamp);
 
         if (logChannel?.isSendable()) {
             await logChannel.send({embeds: [embed]});
@@ -44,8 +44,7 @@ export class MessageUpdateEditLogListener extends Listener {
 
         updateMessage({
             ...oldMsg,
-            content: data.content,
-            timestamp: Date.parse(data.timestamp),
+            content: data.content
         })
     }
 }

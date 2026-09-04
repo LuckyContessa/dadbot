@@ -19,12 +19,12 @@ export class MessageCreateEditLogListener extends Listener {
 
         if (data.guild_id) {
             saveMessage({
-                discord_id: data.id,
-                channel_id: data.channel_id,
-                server_id: data.guild_id,
-                author: data.author.id,
+                id: data.id,
+                channelId: data.channel_id,
+                guildId: data.guild_id,
+                author: data.author,
                 content: data.content,
-                timestamp: Date.parse(data.timestamp),
+                createdTimestamp: Date.parse(data.timestamp),
             })
         }
     }

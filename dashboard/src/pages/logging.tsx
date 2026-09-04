@@ -1,4 +1,4 @@
 
 export function Logging() {
-    return <h1>LOG LOG LOG YOUR STUFF LOG LOG LOG</h1>
+    return <p>There will be some event logging here. A way to track when stuff happened.</p>
 }

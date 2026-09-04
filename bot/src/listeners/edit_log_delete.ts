@@ -18,22 +18,22 @@ export class MessageDeleteEditLogListener extends Listener {
             return
         }
         
-        const editLogChannelId = getServerConfig(msg.server_id)?.editLog?.editLogChannelId;
+        const editLogChannelId = getServerConfig(msg.guildId)?.editLog?.editLogChannelId;
         if (!editLogChannelId) {
             // Edit logs not enabled for this message
             this.container.logger.info(`A message was deleted, but delete logs are not enabled: ${data}`)
             return
         }
 
-        const author = await this.container.client.users.fetch(msg.author);
+        const author = await this.container.client.users.fetch(msg.author.id);
         const editLogChannel = await this.container.client.channels.fetch(editLogChannelId);
 
         const embed = new EmbedBuilder()
             .setColor(0xff0000)
-            .setAuthor({name: "Message Deleted", url: `https://discord.com/channels/${msg.server_id}/${msg.channel_id}`})
+            .setAuthor({name: "Message Deleted", url: `https://discord.com/channels/${msg.guildId}/${msg.channelId}`})
             .setDescription(msg.content)
             .setFooter({text: author.displayName})
-            .setTimestamp(msg.timestamp);
+            .setTimestamp(msg.createdTimestamp);
 
         if (editLogChannel?.isSendable()) {
             await editLogChannel.send({embeds: [embed]});

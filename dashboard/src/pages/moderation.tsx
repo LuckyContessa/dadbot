@@ -1,4 +1,4 @@
 
 export function Moderation() {
-    return <h1>MOD MOD MOD YOUR STUFF MOD MOD MOD</h1>
+    return <h1>This will be a way to track current/previous tickets and reports.</h1>
 }

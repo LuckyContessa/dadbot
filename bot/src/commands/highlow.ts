@@ -1,5 +1,5 @@
 import { Command } from "@sapphire/framework";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, userMention, type BaseMessageOptions } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, userMention } from "discord.js";
 import { getConfig } from "../config.ts";
 
 interface GameState {
@@ -101,7 +101,7 @@ function numToEmoji(x: number): string {
   }).join("")
 }
 
-function renderGame(gameState: GameState): BaseMessageOptions {
+function renderGame(gameState: GameState) {
   const higher = new ButtonBuilder().setCustomId("higher").setLabel("Higher").setStyle(ButtonStyle.Primary)
   const lower = new ButtonBuilder().setCustomId("lower").setLabel("Lower").setStyle(ButtonStyle.Success)
   const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(higher, lower);
@@ -122,25 +122,25 @@ function renderGame(gameState: GameState): BaseMessageOptions {
   }
   
   return {
-      embeds: [
-        {
-          title: "Higher or Lower",
-          description,
-          color: 0x0000FF,
-          fields: [
-            {
-              "name": "Player",
-              "value": userMention(gameState.player),
-              "inline": true
-            },
-            {
-              "name": "Score",
-              "value": `${gameState.score}`,
-              "inline": true
-            }
-          ]
-        }
-      ],
-      components,
-    }
+    embeds: [
+      {
+        title: "Higher or Lower",
+        description,
+        color: 0x0000FF,
+        fields: [
+          {
+            "name": "Player",
+            "value": userMention(gameState.player),
+            "inline": true
+          },
+          {
+            "name": "Score",
+            "value": `${gameState.score}`,
+            "inline": true
+          }
+        ]
+      }
+    ],
+    components,
+  }
 }

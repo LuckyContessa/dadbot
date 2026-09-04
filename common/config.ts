@@ -38,15 +38,20 @@ export interface EditLogConfig {
 /** Settings for reaction roles */
 export interface ReactionRolesConfig {
     /** A source of roles, I guess */
-    sources?: ReactionRoleSource[]
+    sources?: ReactionRoleSource[],
 }
 
 /** A source of roles, I guess */
 export interface ReactionRoleSource{
     /** The message on which one must react */
     messageId: string,
-    /** The reaction that will result in a role */
-    reaction: string,
-    /** The role that will be assigned */
-    role: string
+    /** The channel the message is in */
+    channelId: string,
+    /** Map of reaction name to role name */
+    roles: Record<ReactionName, RoleName>,
 }
+
+/** The reaction that will result in a role */
+export type ReactionName = string;
+/** The role that will be assigned */
+export type RoleName = string;
