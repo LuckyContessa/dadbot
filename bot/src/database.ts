@@ -23,7 +23,8 @@ db.prepare(`CREATE TABLE IF NOT EXISTS messages(
 );`).run();
 db.prepare(`CREATE INDEX IF NOT EXISTS messages_id_index ON messages (id)`)
 
-function fromDbMessage(msg: DbMessage): Message {
+function fromDbMessage(msg?: DbMessage): Message | undefined {
+    if (!msg) return undefined
     return {
         id: msg.discord_id,
         channelId: msg.channel_id,
@@ -33,7 +34,8 @@ function fromDbMessage(msg: DbMessage): Message {
         createdTimestamp: msg.timestamp
     }
 }
-function toDbMessage(msg: Message): DbMessage {
+function toDbMessage(msg?: Message): DbMessage | undefined {
+    if (!msg) return undefined
     return {
         discord_id: msg.id,
         channel_id: msg.channelId,
@@ -47,7 +49,7 @@ function toDbMessage(msg: Message): DbMessage {
 // TODO: Sweep older messages
 
 const getMessageStatement = db.prepare("SELECT * FROM messages WHERE discord_id = ?");
-export function getMessage(discordId: string): Message {
+export function getMessage(discordId: string): Message | undefined {
     return fromDbMessage(getMessageStatement.get(discordId));
 }
 
