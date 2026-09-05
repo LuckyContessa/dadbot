@@ -32,7 +32,7 @@ export interface ServerConfig {
 /** Settings for edit tracking */
 export interface EditLogConfig {
     /** The channelId where notifications will appear, right click > copy channel id */
-    editLogChannelId?: string,
+    editLogChannelId: string,
 }
 
 /** Settings for reaction roles */
